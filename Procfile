@@ -1,1 +1,1 @@
-web: ./client/src/App.js
+web: npm run heroku-postbuild
