@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "start": "node ./code.js",
+    "dev": "nodemon code.js"
+  },
   "dependencies": {
     "mysql": "^2.18.1"
   }
