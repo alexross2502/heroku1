@@ -4,6 +4,7 @@ const { Masters } = require("./Masters");
 const { Clients } = require("./Clients");
 const { Reservation } = require("./Reservation");
 const { Interlayer } = require("./Interlayer");
+const { Confirmation } = require("./Confirmation");
 
 module.exports = {
   Admin,
@@ -11,4 +12,5 @@ module.exports = {
   Masters,
   Clients,
   Reservation,
+  Confirmation,
 };
