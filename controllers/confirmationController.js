@@ -37,7 +37,7 @@ class ConfirmationController {
   }
 
   async check(req, res, next) {
-    const { id } = req.body;
+    const { id } = req.params;
     let availability = await Confirmation.findOne({
       where: { id: id },
     });
