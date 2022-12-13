@@ -1,6 +1,7 @@
 const { Confirmation } = require("../models/models");
 const ApiError = require("../error/ApiError");
 const nodemailer = require("nodemailer");
+const fetch = require("node-fetch");
 
 class ConfirmationController {
   async getAll(req, res) {
@@ -14,8 +15,10 @@ class ConfirmationController {
         id,
         masterName,
         masterSurname,
+        master_id,
         clientEmail,
         townName,
+        town_id,
         masterRating,
         day,
         hours,
@@ -24,8 +27,10 @@ class ConfirmationController {
         id,
         masterName,
         masterSurname,
+        master_id,
         clientEmail,
         townName,
+        town_id,
         masterRating,
         day,
         hours,
@@ -50,6 +55,7 @@ class ConfirmationController {
     const confirmation = await Confirmation.destroy({ where: { id: id } });
     return res.json(confirmation);
   }
+
   async sendMail(req, res, next) {
     const { recipient, name, surname, rating, link } = req.body;
     let transporter = nodemailer.createTransport({

@@ -10,8 +10,10 @@ const Confirmation = sequelize.define("confirmation", {
   },
   masterName: { type: DataTypes.STRING, allowNull: false },
   masterSurname: { type: DataTypes.STRING, allowNull: false },
+  master_id: { type: DataTypes.STRING, allowNull: false },
   clientEmail: { type: DataTypes.STRING, allowNull: false },
   townName: { type: DataTypes.STRING, allowNull: false },
+  town_id: { type: DataTypes.STRING, allowNull: false },
   masterRating: {
     type: DataTypes.INTEGER,
     validate: { min: 1, max: 5 },
