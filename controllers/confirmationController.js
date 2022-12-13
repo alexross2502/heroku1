@@ -47,7 +47,31 @@ class ConfirmationController {
       where: { id: id },
     });
 
-    return res.json(availability);
+    //Создание записи в базе с резервацией
+    if (availability != null) {
+      let reservationData = {};
+      reservationData.day = availability.day;
+      reservationData.hours = availability.hours;
+      reservationData.master_id = availability.master_id;
+      reservationData.towns_id = availability.town_id;
+      fetch("https://mysqltest.herokuapp.com/api/reservation", {
+        method: "POST",
+        body: JSON.stringify(reservationData),
+        headers: { "Content-Type": "application/json" },
+      })
+        .then((res) => res.json())
+        .then((json) => console.log(json))
+        //Удаляем копию из базы с неподтвержденными резервами
+        .then(async () => {
+          const confirmation = await Confirmation.destroy({
+            where: { id: id },
+          });
+          return res.json(confirmation);
+        });
+      return res.json(true);
+    }
+
+    return res.json(false);
   }
 
   async destroy(req, res) {
