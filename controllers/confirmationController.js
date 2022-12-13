@@ -46,7 +46,6 @@ class ConfirmationController {
     let availability = await Confirmation.findOne({
       where: { id: id },
     });
-
     //Создание записи в базе с резервацией
     if (availability != null) {
       let reservationData = {};
@@ -66,12 +65,14 @@ class ConfirmationController {
           const confirmation = await Confirmation.destroy({
             where: { id: id },
           });
-          return res.json(confirmation);
         });
-      return res.json(true);
+
+      return res.json("Ваш заказ подтвержден, ожидайте мастера");
     }
 
-    return res.json(false);
+    return res.json(
+      "Произошла ошибка. Заказ либо не существует, либо уже подтвержден"
+    );
   }
 
   async destroy(req, res) {
