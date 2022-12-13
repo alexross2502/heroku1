@@ -51,7 +51,7 @@ class ConfirmationController {
     return res.json(confirmation);
   }
   async sendMail(req, res, next) {
-    const { recipient, name, surname, rating } = req.body;
+    const { recipient, name, surname, rating, link } = req.body;
     let transporter = nodemailer.createTransport({
       host: "mail.ee",
       auth: {
@@ -65,7 +65,10 @@ class ConfirmationController {
       to: recipient,
       subject: "Уведомление о резерве мастера",
       text: "This message was sent from Node js server.",
-      html: `Вы успешно заказали мастера ${name} ${surname} с рейтингом ${rating}`,
+      html: `
+      Если Вы подтверждаете заказ мастера ${name} ${surname} с рейтингом ${rating} - перейдите, пожалуйста, по ссылке ниже <br>
+      <b><a href="${link}">Собственно ссылка</a></b>
+      `,
     });
 
     return res.json(result);
