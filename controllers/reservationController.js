@@ -1,5 +1,6 @@
 const { Reservation } = require("../models/models");
 const ApiError = require("../error/ApiError");
+const nodemailer = require("nodemailer");
 
 class ReservationController {
   async getAll(req, res) {
@@ -38,6 +39,29 @@ class ReservationController {
     } catch (e) {
       next(ApiError.badRequest(e.message));
     }
+  }
+
+  async sendMail(req, res, next) {
+    const { recipient, name, surname, rating } = req.body;
+    let transporter = nodemailer.createTransport({
+      host: "mail.ee",
+      auth: {
+        user: "alexross1994@mail.ee",
+        pass: "4QW9nfaVC4",
+      },
+    });
+
+    let result = await transporter.sendMail({
+      from: "alexross1994@mail.ee",
+      to: recipient,
+      subject: "Уведомление о резерве мастера",
+      text: "This message was sent from Node js server.",
+      html: `
+      Вы успешно заказали мастера ${name} ${surname} с рейтингом ${rating} 
+      `,
+    });
+
+    return res.json(result);
   }
 }
 
