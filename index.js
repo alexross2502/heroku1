@@ -18,6 +18,11 @@ app.get("*", function (req, res, next) {
   if(req.rawHeaders[3] == 'http://localhost:3000') {next()} else res.json({ msg: "Конфиденциальные данные" });
  
 });
+app.post("*", function (req, res, next) {
+  console.log(rawHeaders[3])
+  if(req.rawHeaders[3] == 'http://localhost:3000') {next()} else res.json({ msg: "Конфиденциальные данные" });
+ 
+});
 
 
 app.use(express.json());
