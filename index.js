@@ -12,7 +12,7 @@ app.use(cors({
 }))
 let permitted = (origin) => {
 if(
-  origin == 'https://test-app22334455.herokuapp.com' && origin == 'https://test-app22334455.herokuapp.com/#' && origin == 'https://test-app22334455.herokuapp.com/clients' && origin == 'https://test-app22334455.herokuapp.com/masters' && origin == 'https://test-app22334455.herokuapp.com/admins' && origin == 'https://test-app22334455.herokuapp.com/towns' && origin == 'https://test-app22334455.herokuapp.com/reservation'
+  origin == 'https://test-app22334455.herokuapp.com' || origin == 'https://test-app22334455.herokuapp.com/#' || origin == 'https://test-app22334455.herokuapp.com/clients' || origin == 'https://test-app22334455.herokuapp.com/masters' || origin == 'https://test-app22334455.herokuapp.com/admins' || origin == 'https://test-app22334455.herokuapp.com/towns' || origin == 'https://test-app22334455.herokuapp.com/reservation'
 ) return true 
 else return false
 }
