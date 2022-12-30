@@ -14,16 +14,16 @@ app.use(cors({
 
 app.get("*", function (req, res, next) {
   console.log(req.header('Origin'))
-  if(permitted(req.rawHeaders[5]) == true) {next()} else res.json({ msg: "Конфиденциальные данные" });
+  if(req.header('Origin') == 'https://test-app22334455.herokuapp.com') {next()} else res.json({ msg: "Конфиденциальные данные" });
 });
 
 app.post("*", function (req, res, next) {
   console.log(req.header('Origin'))
-  if(permitted(req.rawHeaders[5]) == true) {next()} else res.json({ msg: "Конфиденциальные данные" });
+  if(req.header('Origin') == 'https://test-app22334455.herokuapp.com') {next()} else res.json({ msg: "Конфиденциальные данные" });
 });
 
 app.delete("*", function (req, res, next) {
-  if(permitted(req.rawHeaders[5]) == true) {next()} else res.json({ msg: "Конфиденциальные данные" });
+  if(req.header('Origin') == 'https://test-app22334455.herokuapp.com') {next()} else res.json({ msg: "Конфиденциальные данные" });
 });
 
 
