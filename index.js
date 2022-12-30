@@ -11,17 +11,16 @@ app.use(cors({
   origin: "*"
 }))
 
-
-
 app.get("*", function (req, res, next) {
-  console.log(req.rawHeaders)
-  if(req.rawHeaders[3] == 'http://localhost:3000') {next()} else res.json({ msg: "Конфиденциальные данные" });
-  
+  if(req.rawHeaders[5] == 'https://test-app22334455.herokuapp.com') {next()} else res.json({ msg: "Конфиденциальные данные" });
 });
+
 app.post("*", function (req, res, next) {
-  console.log(req.rawHeaders)
-  if(req.rawHeaders[3] == 'http://localhost:3000') {next()} else res.json({ msg: "Конфиденциальные данные" });
-  
+  if(req.rawHeaders[5] == 'https://test-app22334455.herokuapp.com') {next()} else res.json({ msg: "Конфиденциальные данные" });
+});
+
+app.delete("*", function (req, res, next) {
+  if(req.rawHeaders[5] == 'https://test-app22334455.herokuapp.com') {next()} else res.json({ msg: "Конфиденциальные данные" });
 });
 
 
