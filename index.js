@@ -8,13 +8,21 @@ const router = require("./routes/index");
 const errorHandler = require("./middleware/ErrorHandlingMiddleware");
 
 app.use(cors());
-app.get("/api", function (req, res) {
-  res.set(
-    "Access-Control-Allow-Origin",
-    "https://test-app22334455.herokuapp.com/"
-  );
-  res.set("Access-Control-Allow-Credentials", "true");
-  res.send("Конфиденциальные данные мошенникам недоступны!");
+var corsOptions = {
+  origin: "https://test-app22334455.herokuapp.com",
+  optionsSuccessStatus: 200,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+};
+app.post("*", cors(corsOptions), function (req, res, next) {
+  res.json({ msg: "Конфиденциальные данные" });
+});
+app.get("*", cors(corsOptions), function (req, res, next) {
+  res.json({ msg: "Конфиденциальные данные" });
+});
+app.delete("*", cors(corsOptions), function (req, res, next) {
+  res.json({ msg: "Конфиденциальные данные" });
 });
 
 app.use(express.json());
