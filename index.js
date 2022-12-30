@@ -12,6 +12,7 @@ app.use(
     origin: "*",
   })
 );
+
 app.use(express.json());
 app.use("/api", router);
 //обработка ошибок, последний middleware

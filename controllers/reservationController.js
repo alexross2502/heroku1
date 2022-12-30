@@ -1,6 +1,7 @@
-const { Reservation } = require("../models/models");
+const { Reservation, Masters, Towns } = require("../models/models");
 const ApiError = require("../error/ApiError");
 const nodemailer = require("nodemailer");
+const fetch = require("node-fetch");
 
 class ReservationController {
   async getAll(req, res) {
@@ -62,6 +63,54 @@ class ReservationController {
     });
 
     return res.json(result);
+  }
+
+  //Расчет подходящих мастеров
+  async availableMasters(req, res, next) {
+    const { town, date, townName } = req.body;
+
+    let includingTowns = await Reservation.findAll({
+      where: { towns_id: town },
+    });
+
+    let includingReservation = includingTowns.filter(
+      (el) => el.day == date.date
+    ); //Ищет только резервы на конкретный день заказа
+
+    let includingMasters = await Masters.findAll({
+      where: { townName: townName },
+    });
+    //Берет всех мастеров с этого города
+
+    let finaleMasters = [];
+
+    includingMasters.forEach((el) => {
+      finaleMasters.push(el.id);
+    });
+
+    let timeStart = date.time[0];
+    let timeEnd = date.time[1];
+
+    function checkInterval(reservationStart, reservationEnd) {
+      if (
+        (reservationStart >= timeStart && reservationStart < timeEnd) ||
+        (reservationEnd > timeStart && reservationEnd <= timeEnd)
+      ) {
+        return false;
+      } else return true;
+    }
+
+    if (includingReservation.length !== 0) {
+      includingReservation.forEach((el) => {
+        el.hours = el.hours.split("-");
+        if (!checkInterval(el.hours[0], el.hours.slice(-1))) {
+          if (finaleMasters.indexOf(el.master_id) !== -1) {
+            finaleMasters.splice(finaleMasters.indexOf(el.master_id), 1);
+          }
+        }
+      });
+    }
+    return res.json(finaleMasters);
   }
 }
 
