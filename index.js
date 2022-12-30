@@ -10,7 +10,7 @@ const errorHandler = require("./middleware/ErrorHandlingMiddleware");
 app.use(cors({
   origin: "*"
 }))
-
+/*
 app.get("*", function (req, res, next) {
   if(req.rawHeaders[5] == 'https://test-app22334455.herokuapp.com') {next()} else res.json({ msg: "Конфиденциальные данные" });
 });
@@ -23,7 +23,7 @@ app.delete("*", function (req, res, next) {
   if(req.rawHeaders[5] == 'https://test-app22334455.herokuapp.com') {next()} else res.json({ msg: "Конфиденциальные данные" });
 });
 
-
+*/
 app.use(express.json());
 app.use("/api", router);
 //обработка ошибок, последний middleware
