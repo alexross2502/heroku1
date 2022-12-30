@@ -7,11 +7,15 @@ const models = require("./models/models");
 const router = require("./routes/index");
 const errorHandler = require("./middleware/ErrorHandlingMiddleware");
 
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+app.use(cors());
+app.get("/api", function (req, res) {
+  res.set(
+    "Access-Control-Allow-Origin",
+    "https://test-app22334455.herokuapp.com/"
+  );
+  res.set("Access-Control-Allow-Credentials", "true");
+  res.send("Конфиденциальные данные мошенникам недоступны!");
+});
 
 app.use(express.json());
 app.use("/api", router);
