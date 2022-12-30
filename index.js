@@ -18,10 +18,12 @@ else return false
 }
 
 app.get("*", function (req, res, next) {
+  console.log(req.connection.remoteAddress)
   if(permitted(req.rawHeaders[5]) == true) {next()} else res.json({ msg: "Конфиденциальные данные" });
 });
 
 app.post("*", function (req, res, next) {
+  console.log(req.connection.remoteAddress)
   if(permitted(req.rawHeaders[5]) == true) {next()} else res.json({ msg: "Конфиденциальные данные" });
 });
 
