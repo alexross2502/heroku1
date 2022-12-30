@@ -7,21 +7,23 @@ const models = require("./models/models");
 const router = require("./routes/index");
 const errorHandler = require("./middleware/ErrorHandlingMiddleware");
 
-app.use(cors());
+app.use(cors({
+  origin: "*"
+}))
 var corsOptions = {
-  origin: "https://test-app22334455.herokuapp.com",
-  optionsSuccessStatus: 200,
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
+  origin: "*",
 };
-app.post("*", cors(corsOptions), function (req, res, next) {
+app.post("*", cors(), function (req, res, next) {
   res.json({ msg: "Конфиденциальные данные" });
 });
-app.get("*", cors(corsOptions), function (req, res, next) {
-  res.json({ msg: "Конфиденциальные данные" });
+
+app.get("*", function (req, res, next) {
+  console.log(req.protocol)
+  console.log(req.hostname)
+  if(req.rawHeaders[3] == 'http://localhost:3000') {next()} else res.json({ msg: "Конфиденциальные данные" });
+ 
 });
-app.delete("*", cors(corsOptions), function (req, res, next) {
+app.delete("*", cors(), function (req, res, next) {
   res.json({ msg: "Конфиденциальные данные" });
 });
 
