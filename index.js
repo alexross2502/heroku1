@@ -10,22 +10,15 @@ const errorHandler = require("./middleware/ErrorHandlingMiddleware");
 app.use(cors({
   origin: "*"
 }))
-var corsOptions = {
-  origin: "*",
-};
-app.post("*", cors(), function (req, res, next) {
-  res.json({ msg: "Конфиденциальные данные" });
-});
+
+
 
 app.get("*", function (req, res, next) {
-  console.log(req.protocol)
-  console.log(req.hostname)
+  console.log(rawHeaders[3])
   if(req.rawHeaders[3] == 'http://localhost:3000') {next()} else res.json({ msg: "Конфиденциальные данные" });
  
 });
-app.delete("*", cors(), function (req, res, next) {
-  res.json({ msg: "Конфиденциальные данные" });
-});
+
 
 app.use(express.json());
 app.use("/api", router);
