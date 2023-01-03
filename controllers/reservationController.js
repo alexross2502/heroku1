@@ -114,4 +114,28 @@ class ReservationController {
   }
 }
 
+function dateConverter(day, month, year, hour) {
+ if (Number(day)[0] == 0) Number(day) = Number(day)[1]
+  return (year * 8760 + month * 730 + day * 24 + hour)
+}
+
+setInterval(async () => {
+  const reservation = await Reservation.findAll();
+  let d = new Date();
+  let currentDay = String(d.getDate());
+  let currentMonth = String(d.getMonth() + 1);
+  let currentYear = String(d.getFullYear());
+  let currenthour = String(d.getHours())
+  let currentTimestamp = dateConverter(currentDay, currentMonth, currentYear, currenthour)
+
+  reservation.forEach(async (item) => {
+   let date = item.dataValues.day.split('.')
+   if (date[0][0] == 0) date[0] = date[0][1]
+   if (dateConverter(date[0], date[1], date[2], item.dataValues.hours.split('-')[0]) <= currentTimestamp) {
+    await Reservation.destroy({ where: { id: item.dataValues.id } })
+   }
+  })
+  
+}, 86400000);
+
 module.exports = new ReservationController();
