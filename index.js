@@ -13,6 +13,26 @@ app.use(
   })
 );
 
+app.get("*", function (req, res, next) {
+  console.log(req.header("Origin"));
+  if (req.header("Origin") == "https://test-app22334455.herokuapp.com") {
+    next();
+  } else res.json({ msg: "Конфиденциальные данные" });
+});
+
+app.post("*", function (req, res, next) {
+  console.log(req.header("Origin"));
+  if (req.header("Origin") == "https://test-app22334455.herokuapp.com") {
+    next();
+  } else res.json({ msg: "Конфиденциальные данные" });
+});
+
+app.delete("*", function (req, res, next) {
+  if (req.header("Origin") == "https://test-app22334455.herokuapp.com") {
+    next();
+  } else res.json({ msg: "Конфиденциальные данные" });
+});
+
 app.use(express.json());
 app.use("/api", router);
 //обработка ошибок, последний middleware
