@@ -27,6 +27,7 @@ class ReservationController {
 
   async create(req, res, next) {
     const { day, hours, master_id, towns_id } = req.body;
+    console.log(day)
     if (dateChecker) {
       try {
         const reservation = await Reservation.create({
