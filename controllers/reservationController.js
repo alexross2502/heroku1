@@ -3,6 +3,16 @@ const ApiError = require("../error/ApiError");
 const nodemailer = require("nodemailer");
 const fetch = require("node-fetch");
 
+function dateChecker() {
+  let d = new Date();
+  let currentDay = String(d.getDate());
+  let currentMonth = String(d.getMonth() + 1);
+  let currentYear = String(d.getFullYear());
+  let currenthour = String(d.getHours())
+  let currentTimestamp = dateConverter(currentDay, currentMonth, currentYear, currenthour)
+return true
+}
+
 class ReservationController {
   async getAll(req, res) {
     const reservation = await Reservation.findAll();
@@ -16,17 +26,19 @@ class ReservationController {
   }
 
   async create(req, res, next) {
-    try {
-      const { day, hours, master_id, towns_id } = req.body;
-      const reservation = await Reservation.create({
-        day,
-        hours,
-        master_id,
-        towns_id,
-      });
-      return res.json(reservation);
-    } catch (e) {
-      next(ApiError.badRequest(e.message));
+    const { day, hours, master_id, towns_id } = req.body;
+    if (dateChecker) {
+      try {
+        const reservation = await Reservation.create({
+          day,
+          hours,
+          master_id,
+          towns_id,
+        });
+        return res.json(reservation);
+      } catch (e) {
+        next(ApiError.badRequest(e.message));
+      }
     }
   }
 
