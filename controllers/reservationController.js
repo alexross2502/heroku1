@@ -3,14 +3,20 @@ const ApiError = require("../error/ApiError");
 const nodemailer = require("nodemailer");
 const fetch = require("node-fetch");
 
-function dateChecker() {
+////Проверка чтоб резерв был на будущее время
+function dateChecker(day, hours) {
   let d = new Date();
   let currentDay = String(d.getDate());
   let currentMonth = String(d.getMonth() + 1);
   let currentYear = String(d.getFullYear());
   let currenthour = String(d.getHours())
   let currentTimestamp = dateConverter(currentDay, currentMonth, currentYear, currenthour)
-return true
+  let date = day.split('.')
+
+  if (date[0][0] == 0) date[0] = date[0][1]
+  if(dateConverter(date[0], date[1], date[2], hours.split('-')[0]) > currentTimestamp) {
+    return true
+  }else return false
 }
 
 class ReservationController {
@@ -27,8 +33,8 @@ class ReservationController {
 
   async create(req, res, next) {
     const { day, hours, master_id, towns_id } = req.body;
-    console.log(day)
-    if (dateChecker) {
+   let check = dateChecker(day, hours)
+    if (check) {
       try {
         const reservation = await Reservation.create({
           day,
@@ -40,7 +46,7 @@ class ReservationController {
       } catch (e) {
         next(ApiError.badRequest(e.message));
       }
-    }
+    }else return res.json('vrong date')
   }
 
   async getAvailable(req, res, next) {
