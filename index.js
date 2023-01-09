@@ -12,7 +12,7 @@ app.use(
     origin: "*",
   })
 );
-
+/*
 app.get("*", function (req, res, next) {
   console.log(req.header("Origin"));
   if (req.header("Origin") == "https://test-app22334455.herokuapp.com") {
@@ -32,7 +32,7 @@ app.delete("*", function (req, res, next) {
     next();
   } else res.json({ msg: "Конфиденциальные данные" });
 });
-
+*/
 app.use(express.json());
 app.use("/api", router);
 //обработка ошибок, последний middleware
