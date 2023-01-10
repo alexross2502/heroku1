@@ -8,8 +8,16 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   clientsController.getAll
 );
-router.post("/", clientsController.create);
-router.delete("/:id", clientsController.destroy);
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  clientsController.create
+);
+router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  clientsController.destroy
+);
 router.post("/check", clientsController.check);
 
 module.exports = router;

@@ -1,12 +1,33 @@
 const Router = require("express");
 const router = new Router();
 const reservationController = require("../controllers/reservationController");
+const passport = require("passport");
 
-router.get("/", reservationController.getAll);
-router.post("/", reservationController.create);
-router.delete("/:id", reservationController.destroy);
-router.get("/:id", reservationController.getAvailable);
-router.post("/mail", reservationController.sendMail);
+router.get(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  reservationController.getAll
+);
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  reservationController.create
+);
+router.delete(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  reservationController.destroy
+);
+router.get(
+  "/:id",
+  passport.authenticate("jwt", { session: false }),
+  reservationController.getAvailable
+);
+router.post(
+  "/mail",
+  passport.authenticate("jwt", { session: false }),
+  reservationController.sendMail
+);
 router.post("/available", reservationController.availableMasters);
 
 module.exports = router;
