@@ -1,12 +1,21 @@
 const { Clients } = require("../models/models");
 const ApiError = require("../error/ApiError");
 
+const regexEmail =
+  /^([a-z0-9_-]+.)*[a-z0-9_-]+@[a-z0-9_-]+(.[a-z0-9_-]+)*.[a-z]{2,6}$/;
+
+const regexName = /^[а-яА-я]+$/;
+
 class ClientsController {
   async create(req, res, next) {
     try {
       const { name, email } = req.body;
-      const client = await Clients.create({ name, email });
-      return res.json(client);
+      if (regexName.test(name) && regexEmail.test(email)) {
+        const client = await Clients.create({ name, email });
+        return res.json(client);
+      } else {
+        return res.json("Неверный формат данных");
+      }
     } catch (e) {
       next(ApiError.badRequest(e.message));
     }
@@ -27,13 +36,17 @@ class ClientsController {
   async check(req, res, next) {
     try {
       const { name, email } = req.body;
-      let existence = await Clients.findOne({
-        where: { email: email },
-      });
-      if (existence == null) {
-        const client = await Clients.create({ name, email });
-        return res.json(existence);
-      } else return res.json(existence);
+      if (regexName.test(name) && regexEmail.test(email)) {
+        let existence = await Clients.findOne({
+          where: { email: email },
+        });
+        if (existence == null) {
+          const client = await Clients.create({ name, email });
+          return res.json(existence);
+        } else return res.json(existence);
+      } else {
+        return res.json("Неверный формат данных");
+      }
     } catch (e) {
       next(ApiError.badRequest(e.message));
     }

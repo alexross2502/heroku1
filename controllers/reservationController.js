@@ -101,10 +101,16 @@ class ReservationController {
     });
     //Берет всех мастеров с этого города
 
-    let finaleMasters = [];
-
+    let finaleMastersIndex = [];
+    let temporary = {}
     includingMasters.forEach((el) => {
-      finaleMasters.push(el.id);
+      finaleMastersIndex.push(el.id);
+      temporary[el.id] = {
+        id: el.id,
+        name: el.name,
+        surname: el.surname,
+        rating: el.rating
+      }
     });
 
     let timeStart = date.time[0];
@@ -123,13 +129,19 @@ class ReservationController {
       includingReservation.forEach((el) => {
         el.hours = el.hours.split("-");
         if (!checkInterval(el.hours[0], el.hours.slice(-1))) {
-          if (finaleMasters.indexOf(el.master_id) !== -1) {
-            finaleMasters.splice(finaleMasters.indexOf(el.master_id), 1);
+          if (finaleMastersIndex.indexOf(el.master_id) !== -1) {
+            finaleMastersIndex.splice(finaleMastersIndex.indexOf(el.master_id), 1);
           }
         }
       });
     }
-    return res.json(finaleMasters);
+
+    let finaleMasters = []
+     finaleMastersIndex.forEach((el) => {
+      finaleMasters.push(temporary[el])
+    })
+
+    return res.json(finaleMasters)
   }
 }
 
@@ -137,24 +149,5 @@ function dateConverter(day, month, year, hour) {
  if (Number(day)[0] == 0) Number(day) = Number(day)[1]
   return (year * 8760 + month * 730 + day * 24 + hour)
 }
-
-setInterval(async () => {
-  const reservation = await Reservation.findAll();
-  let d = new Date();
-  let currentDay = String(d.getDate());
-  let currentMonth = String(d.getMonth() + 1);
-  let currentYear = String(d.getFullYear());
-  let currenthour = String(d.getHours())
-  let currentTimestamp = dateConverter(currentDay, currentMonth, currentYear, currenthour)
-
-  reservation.forEach(async (item) => {
-   let date = item.dataValues.day.split('.')
-   if (date[0][0] == 0) date[0] = date[0][1]
-   if (dateConverter(date[0], date[1], date[2], item.dataValues.hours.split('-')[0]) <= currentTimestamp) {
-    await Reservation.destroy({ where: { id: item.dataValues.id } })
-   }
-  })
-  
-}, 86400000);
 
 module.exports = new ReservationController();
