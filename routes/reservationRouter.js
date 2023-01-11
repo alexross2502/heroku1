@@ -8,7 +8,11 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   reservationController.getAll
 );
-router.post("/", reservationController.create);
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  reservationController.create
+);
 router.delete(
   "/:id",
   passport.authenticate("jwt", { session: false }),
@@ -19,11 +23,7 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   reservationController.getAvailable
 );
-router.post(
-  "/mail",
-  passport.authenticate("jwt", { session: false }),
-  reservationController.sendMail
-);
+router.post("/order", reservationController.makeOrder);
 router.post("/available", reservationController.availableMasters);
 
 module.exports = router;

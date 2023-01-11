@@ -19,6 +19,34 @@ function dateChecker(day, hours) {
   }else return false
 }
 
+function dateConverter(day, month, year, hour) {
+  if (Number(day)[0] == 0) Number(day) = Number(day)[1]
+   return (year * 8760 + month * 730 + day * 24 + hour)
+ }
+
+ ////Отправка письма 
+ async function sendMail(recipient, name, surname, rating) {
+  let transporter = nodemailer.createTransport({
+    host: "mail.ee",
+    auth: {
+      user: "alexross19941994@mail.ee",
+      pass: "1aCN1c9XwT",
+    },
+  });
+
+  let result = await transporter.sendMail({
+    from: "alexross19941994@mail.ee",
+    to: recipient,
+    subject: "Уведомление о резерве мастера",
+    text: "This message was sent from Node js server.",
+    html: `
+    Вы успешно заказали мастера ${name} ${surname} с рейтингом ${rating} 
+    `,
+  });
+
+ // return res.json(result);
+}
+
 class ReservationController {
   async getAll(req, res) {
     const reservation = await Reservation.findAll();
@@ -59,29 +87,6 @@ class ReservationController {
     } catch (e) {
       next(ApiError.badRequest(e.message));
     }
-  }
-
-  async sendMail(req, res, next) {
-    const { recipient, name, surname, rating } = req.body;
-    let transporter = nodemailer.createTransport({
-      host: "mail.ee",
-      auth: {
-        user: "alexross1994@mail.ee",
-        pass: "4QW9nfaVC4",
-      },
-    });
-
-    let result = await transporter.sendMail({
-      from: "alexross1994@mail.ee",
-      to: recipient,
-      subject: "Уведомление о резерве мастера",
-      text: "This message was sent from Node js server.",
-      html: `
-      Вы успешно заказали мастера ${name} ${surname} с рейтингом ${rating} 
-      `,
-    });
-
-    return res.json(result);
   }
 
   //Расчет подходящих мастеров
@@ -143,11 +148,31 @@ class ReservationController {
 
     return res.json(finaleMasters)
   }
+
+  async makeOrder(req, res, next) {
+    const { day, hours, master_id, towns_id, recipient, name, surname, rating } = req.body;
+   let check = dateChecker(day, hours)
+    if (check) {
+      try {
+        const reservation = await Reservation.create({
+          day,
+          hours,
+          master_id,
+          towns_id,
+        });
+
+        //Отправка письма
+        sendMail(recipient, name, surname, rating)
+        return res.json(reservation);
+      } catch (e) {
+        next(ApiError.badRequest(e.message));
+      }
+    }else return res.json('vrong date')
+  }
+
+ 
 }
 
-function dateConverter(day, month, year, hour) {
- if (Number(day)[0] == 0) Number(day) = Number(day)[1]
-  return (year * 8760 + month * 730 + day * 24 + hour)
-}
+
 
 module.exports = new ReservationController();
