@@ -101,10 +101,16 @@ class ReservationController {
     });
     //Берет всех мастеров с этого города
 
-    let finaleMasters = [];
-
+    let finaleMastersIndex = [];
+    let temporary = {}
     includingMasters.forEach((el) => {
-      finaleMasters.push(el.id);
+      finaleMastersIndex.push(el.id);
+      temporary[el.id] = {
+        id: el.id,
+        name: el.name,
+        surname: el.surname,
+        rating: el.rating
+      }
     });
 
     let timeStart = date.time[0];
@@ -123,13 +129,19 @@ class ReservationController {
       includingReservation.forEach((el) => {
         el.hours = el.hours.split("-");
         if (!checkInterval(el.hours[0], el.hours.slice(-1))) {
-          if (finaleMasters.indexOf(el.master_id) !== -1) {
-            finaleMasters.splice(finaleMasters.indexOf(el.master_id), 1);
+          if (finaleMastersIndex.indexOf(el.master_id) !== -1) {
+            finaleMastersIndex.splice(finaleMastersIndex.indexOf(el.master_id), 1);
           }
         }
       });
     }
-    return res.json(finaleMasters);
+
+    let finaleMasters = []
+     finaleMastersIndex.forEach((el) => {
+      finaleMasters.push(temporary[el])
+    })
+
+    return res.json(finaleMasters)
   }
 }
 
