@@ -5,18 +5,18 @@ const passport = require("passport");
 
 router.get(
   "/",
-  passport.authenticate("jwt", { session: false }),
+
   reservationController.getAll
 );
 router.post("/", reservationController.create);
 router.delete(
   "/:id",
-  passport.authenticate("jwt", { session: false }),
+
   reservationController.destroy
 );
 router.get(
   "/:id",
-  passport.authenticate("jwt", { session: false }),
+
   reservationController.getAvailable
 );
 router.post("/mail", reservationController.sendMail);

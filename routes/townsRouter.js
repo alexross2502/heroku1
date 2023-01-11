@@ -4,15 +4,7 @@ const townsController = require("../controllers/townsController");
 const passport = require("passport");
 
 router.get("/", townsController.getAll);
-router.post(
-  "/",
-  passport.authenticate("jwt", { session: false }),
-  townsController.create
-);
-router.delete(
-  "/:id",
-  passport.authenticate("jwt", { session: false }),
-  townsController.destroy
-);
+router.post("/", townsController.create);
+router.delete("/:id", townsController.destroy);
 
 module.exports = router;
