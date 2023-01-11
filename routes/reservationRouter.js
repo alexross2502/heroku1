@@ -19,11 +19,7 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   reservationController.getAvailable
 );
-router.post(
-  "/mail",
-  passport.authenticate("jwt", { session: false }),
-  reservationController.sendMail
-);
+router.post("/mail", reservationController.sendMail);
 router.post("/available", reservationController.availableMasters);
 
 module.exports = router;
