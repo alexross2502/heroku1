@@ -8,11 +8,7 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   reservationController.getAll
 );
-router.post(
-  "/",
-  passport.authenticate("jwt", { session: false }),
-  reservationController.create
-);
+router.post("/", reservationController.create);
 router.delete(
   "/:id",
   passport.authenticate("jwt", { session: false }),
