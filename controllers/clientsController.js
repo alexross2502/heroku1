@@ -1,20 +1,16 @@
 const { Clients } = require("../models/models");
 const ApiError = require("../error/ApiError");
-
-const regexEmail =
-  /^([a-z0-9_-]+.)*[a-z0-9_-]+@[a-z0-9_-]+(.[a-z0-9_-]+)*.[a-z]{2,6}$/;
-
-const regexName = /^[а-яА-я]+$/;
+const Validator = require("../middleware/validator");
 
 class ClientsController {
   async create(req, res, next) {
     try {
       const { name, email } = req.body;
-      if (regexName.test(name) && regexEmail.test(email)) {
+      if (Validator.checkName(name) && Validator.checkEmail(email)) {
         const client = await Clients.create({ name, email });
         return res.json(client);
       } else {
-        return res.json("Неверный формат данных");
+        return res.json("Неверные данные");
       }
     } catch (e) {
       next(ApiError.badRequest(e.message));
@@ -45,7 +41,7 @@ class ClientsController {
           return res.json(existence);
         } else return res.json(existence);
       } else {
-        return res.json("Неверный формат данных");
+        return res.json("Неверные данные");
       }
     } catch (e) {
       next(ApiError.badRequest(e.message));

@@ -19,7 +19,6 @@ class AdminController {
           { expiresIn: 60 * 60 }
         );
       }
-      //return res.json(!!availability, token);
       return res.json({
         availability: !!availability,
         token: `Bearer ${token}`,
