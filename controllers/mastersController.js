@@ -10,7 +10,8 @@ class MastersController {
         Validator.checkName(name) &&
         Validator.checkName(surname) &&
         Validator.checkName(townName) &&
-        Validator.checkRating(rating)
+        Validator.checkRating(rating) &&
+        (await Validator.checkTownForMaster(townName))
       ) {
         const master = await Masters.create({
           name,

@@ -1,3 +1,6 @@
+const { Masters } = require("../models/Masters");
+const { Towns } = require("../models/Towns");
+
 const Validator = {};
 
 Validator.checkName = function nameCheck(el) {
@@ -50,11 +53,54 @@ Validator.dateConverter = function converterData(day, month, year, hour) {
  }
 
 Validator.hoursChecker = function checkerHours(hours) {
-  if(hours >= 9 && hours <= 17) {
+  console.log(hours.split('-'))
+  console.log(hours.split('-')[0])
+  console.log(hours.split('-')[hours.split('-').length - 1] + (hours.split('-').length - 1))
+  console.log(Number(hours.split('-')[hours.split('-').length - 1]))
+  console.log(Number((hours.split('-').length - 1)))
+
+  if(hours.split('-').length > 3 || (hours.split('-')[0] != +hours.split('-')[hours.split('-').length - 1] - Number((hours.split('-').length - 1)))) {
+    return false
+  } else {
+    hours = hours.split('-')[0]
+    if(hours >= 9 && hours <= 17) {
+      return true
+    } else {
+      return false
+    }
+  }
+  
+}
+
+Validator.checkTownForMaster = async function checkTownForMaster (townName) {
+  let town = await Towns.findOne({
+    where: { name: townName },
+  });
+  console.log(town)
+  if(town != null) {
     return true
   } else {
     return false
   }
+}
+
+Validator.checkCreateReservation = async function checkCreateReservation (master_id, towns_id) {
+  let master = await Masters.findOne({
+    where: { id: master_id },
+  });
+  if(master != null) {
+    let town = await Towns.findOne({
+      where: { id: towns_id, name: master.dataValues.townName },
+    });
+    if(town != null) {
+      return true
+    } else {
+      return false
+    }
+  } else {
+    return false
+  }
+  
 }
 
 module.exports = Validator;
