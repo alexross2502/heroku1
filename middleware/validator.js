@@ -44,7 +44,9 @@ Validator.dateChecker = function checkerDate(day, hours) {
   if (date[0][0] == 0) date[0] = date[0][1]
   if(Validator.dateConverter(date[0], date[1], date[2], hours.split('-')[0]) > currentTimestamp) {
     return true
-  }else return false
+  }else {
+    return false
+  }
 }
 
 Validator.dateConverter = function converterData(day, month, year, hour) {
@@ -53,11 +55,6 @@ Validator.dateConverter = function converterData(day, month, year, hour) {
  }
 
 Validator.hoursChecker = function checkerHours(hours) {
-  console.log(hours.split('-'))
-  console.log(hours.split('-')[0])
-  console.log(hours.split('-')[hours.split('-').length - 1] + (hours.split('-').length - 1))
-  console.log(Number(hours.split('-')[hours.split('-').length - 1]))
-  console.log(Number((hours.split('-').length - 1)))
 
   if(hours.split('-').length > 3 || (hours.split('-')[0] != +hours.split('-')[hours.split('-').length - 1] - Number((hours.split('-').length - 1)))) {
     return false
@@ -76,7 +73,6 @@ Validator.checkTownForMaster = async function checkTownForMaster (townName) {
   let town = await Towns.findOne({
     where: { name: townName },
   });
-  console.log(town)
   if(town != null) {
     return true
   } else {
@@ -101,6 +97,16 @@ Validator.checkCreateReservation = async function checkCreateReservation (master
     return false
   }
   
+}
+
+Validator.dateRange = function dateRange (date) {
+  date = date.split('.').reverse().join('-')
+  const d = new Date(date);
+  if(d != 'Invalid Date' && +date.split('-')[0] > 2020){
+    return true
+  } else {
+    return false
+  }
 }
 
 module.exports = Validator;
