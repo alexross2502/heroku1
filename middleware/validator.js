@@ -60,7 +60,7 @@ Validator.hoursChecker = function checkerHours(hours) {
     return false
   } else {
     hours = hours.split('-')[0]
-    if(hours >= 9 && hours <= 17) {
+    if(hours >= 9 && hours <= 19) {
       return true
     } else {
       return false
@@ -100,7 +100,11 @@ Validator.checkCreateReservation = async function checkCreateReservation (master
 }
 
 Validator.dateRange = function dateRange (date) {
-  date = date.split('.').reverse().join('-')
+  date = date.split('.').reverse()
+  if(isNaN(+date[0]) || isNaN(+date[1]) || isNaN(+date[2])) {
+    return false
+  }
+  date = date.join('-')
   const d = new Date(date);
   if(d != 'Invalid Date' && +date.split('-')[0] > 2020){
     return true
