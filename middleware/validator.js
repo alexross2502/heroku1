@@ -114,4 +114,37 @@ Validator.dateRange = function dateRange (date) {
   }
 }
 
+function checkInterval(reservationStart, reservationEnd, timeStart, timeEnd) {
+
+  if (
+    timeEnd > reservationStart && timeEnd <= reservationEnd ||
+    timeStart >= reservationStart && timeStart < reservationEnd ||
+    timeStart <= reservationStart && timeEnd >= reservationEnd
+  ) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+Validator.sameTime = async function sameTime (day, hours, master_id) {
+  let reservation = await Reservation.findAll({
+    where: { master_id: master_id, day: day },
+  });
+  let availability = true;
+  hours = hours.split('-')
+  let timeStart = +hours[0]
+  let timeEnd = +hours[hours.length - 1] + 1
+  reservation.forEach((el) => {
+    time = el.dataValues.hours.split('-')
+    let reservationStart = +time[0]
+    let reservationEnd = +time[time.length - 1] + 1
+   if(checkInterval(reservationStart, reservationEnd, timeStart, timeEnd) == false) {
+    availability = false
+   }
+  })
+  return availability
+}
+
+
 module.exports = Validator;
