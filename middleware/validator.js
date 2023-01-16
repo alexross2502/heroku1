@@ -1,7 +1,20 @@
 const { Masters } = require("../models/Masters");
+const { Reservation } = require("../models/Reservation");
 const { Towns } = require("../models/Towns");
 
 const Validator = {};
+
+function checkInterval(reservationStart, reservationEnd, timeStart, timeEnd) {
+  if (
+    timeEnd > reservationStart && timeEnd <= reservationEnd ||
+    timeStart >= reservationStart && timeStart < reservationEnd ||
+    timeStart <= reservationStart && timeEnd >= reservationEnd
+  ) {
+    return false;
+  } else {
+    return true;
+  }
+}
 
 Validator.checkName = function nameCheck(el) {
   const regexName = /^[а-яА-я]+$/;
@@ -111,6 +124,28 @@ Validator.dateRange = function dateRange (date) {
   } else {
     return false
   }
+}
+
+Validator.sameTime = async function sameTime (day, hours, master_id) {
+  let reservation = await Reservation.findAll({
+    where: { master_id: master_id, day: day },
+  });
+  let availability = true;
+  hours = hours.split('-')
+  let timeStart = hours[0]
+  let timeEnd = hours[hours.length - 1]
+  //console.log(timeStart, timeEnd)
+  reservation.forEach((el) => {
+    time = el.dataValues.hours.split('-')
+    let reservationStart = time[0]
+    let reservationEnd = time[time.length - 1]
+    //console.log(reservationStart, reservationEnd)
+   //console.log(checkInterval(reservationStart, reservationEnd, timeStart, timeEnd))
+   if(checkInterval(reservationStart, reservationEnd, timeStart, timeEnd) == false) {
+    availability = false
+   }
+  })
+  return availability
 }
 
 module.exports = Validator;

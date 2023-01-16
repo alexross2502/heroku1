@@ -38,7 +38,6 @@ class ReservationController {
 
   async create(req, res, next) {
     const { day, hours, master_id, towns_id } = req.body;
-
     if (
       Validator.dateChecker(day, hours) &&
       Validator.hoursChecker(hours) &&
