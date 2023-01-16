@@ -32,7 +32,7 @@ class ClientsController {
   async check(req, res, next) {
     try {
       const { name, email } = req.body;
-      if (regexName.test(name) && regexEmail.test(email)) {
+      if (Validator.checkName(name) && Validator.checkEmail(email)) {
         let existence = await Clients.findOne({
           where: { email: email },
         });
