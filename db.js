@@ -1,12 +1,12 @@
 const { Sequelize } = require("sequelize");
 
 module.exports = new Sequelize(
-  "sql8589442",
-  "sql8589442",
-  "WD75nJRT1Z",
+  "heroku_database",
+  "heroku_database",
+  "MAKROMINxxx111",
   {
     dialect: "mysql",
-    host: "sql8.freesqldatabase.com",
+    host: "db4free.net",
     port: "3306",
   },
   {
