@@ -38,11 +38,11 @@ class ReservationController {
 
   async create(req, res, next) {
     const { day, hours, master_id, towns_id } = req.body;
-    console.log(await Validator.sameTime(day, hours, master_id));
-    console.log(Validator.dateChecker(day, hours));
-    console.log(Validator.hoursChecker(hours));
-    console.log(await Validator.checkCreateReservation(master_id, towns_id));
-    console.log(Validator.dateRange(day));
+    //console.log(await Validator.sameTime(day, hours, master_id));
+    //console.log(Validator.dateChecker(day, hours));
+    //console.log(Validator.hoursChecker(hours));
+    //console.log(await Validator.checkCreateReservation(master_id, towns_id));
+    //console.log(Validator.dateRange(day));
     if (
       Validator.dateChecker(day, hours) &&
       Validator.hoursChecker(hours) &&

@@ -41,6 +41,7 @@ Validator.dateChecker = function checkerDate(day, hours) {
   let currenthour = String(d.getHours())
   let currentTimestamp = Validator.dateConverter(currentDay, currentMonth, currentYear, currenthour)
   let date = day.split('.')
+console.log(currentTimestamp)
 
   if (date[0][0] == 0) date[0] = date[0][1]
   if(Validator.dateConverter(date[0], date[1], date[2], hours.split('-')[0]) > currentTimestamp) {
@@ -52,6 +53,7 @@ Validator.dateChecker = function checkerDate(day, hours) {
 
 Validator.dateConverter = function converterData(day, month, year, hour) {
   if (Number(day)[0] == 0) Number(day) = Number(day)[1]
+  console.log(year * 8760 + month * 730 + day * 24 + hour)
    return (year * 8760 + month * 730 + day * 24 + hour)
  }
 
