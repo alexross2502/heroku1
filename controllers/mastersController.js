@@ -1,18 +1,17 @@
 const { Masters } = require("../models/models");
 const ApiError = require("../error/ApiError");
-
-const regexText = /^[а-яА-я]+$/;
+const Validator = require("../middleware/validator");
 
 class MastersController {
   async create(req, res, next) {
     try {
       const { name, surname, rating, townName } = req.body;
       if (
-        regexText.test(name) &&
-        regexText.test(surname) &&
-        regexText.test(townName) &&
-        rating >= 1 &&
-        rating <= 5
+        Validator.checkName(name) &&
+        Validator.checkName(surname) &&
+        Validator.checkName(townName) &&
+        Validator.checkRating(rating) &&
+        (await Validator.checkTownForMaster(townName))
       ) {
         const master = await Masters.create({
           name,
@@ -22,7 +21,7 @@ class MastersController {
         });
         return res.json(master);
       } else {
-        return res.json("Неверный формат данных");
+        return res.json("Неверные данные");
       }
     } catch (e) {
       next(ApiError.badRequest(e.message));

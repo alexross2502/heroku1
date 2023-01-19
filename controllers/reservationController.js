@@ -1,22 +1,27 @@
-const { Reservation, Masters, Towns } = require("../models/models");
+const { Reservation, Masters } = require("../models/models");
 const ApiError = require("../error/ApiError");
 const nodemailer = require("nodemailer");
-const fetch = require("node-fetch");
+const Validator = require("../middleware/validator");
 
-////Проверка чтоб резерв был на будущее время
-function dateChecker(day, hours) {
-  let d = new Date();
-  let currentDay = String(d.getDate());
-  let currentMonth = String(d.getMonth() + 1);
-  let currentYear = String(d.getFullYear());
-  let currenthour = String(d.getHours())
-  let currentTimestamp = dateConverter(currentDay, currentMonth, currentYear, currenthour)
-  let date = day.split('.')
+////Отправка письма
+async function sendMail(recipient, name, surname, rating) {
+  let transporter = nodemailer.createTransport({
+    host: "mail.ee",
+    auth: {
+      user: "alexross19941994@mail.ee",
+      pass: "1aCN1c9XwT",
+    },
+  });
 
-  if (date[0][0] == 0) date[0] = date[0][1]
-  if(dateConverter(date[0], date[1], date[2], hours.split('-')[0]) > currentTimestamp) {
-    return true
-  }else return false
+  let result = await transporter.sendMail({
+    from: "alexross19941994@mail.ee",
+    to: recipient,
+    subject: "Уведомление о резерве мастера",
+    text: "This message was sent from Node js server.",
+    html: `
+    Вы успешно заказали мастера ${name} ${surname} с рейтингом ${rating} 
+    `,
+  });
 }
 
 class ReservationController {
@@ -33,8 +38,18 @@ class ReservationController {
 
   async create(req, res, next) {
     const { day, hours, master_id, towns_id } = req.body;
-   let check = dateChecker(day, hours)
-    if (check) {
+    console.log(await Validator.sameTime(day, hours, master_id));
+    console.log(Validator.dateChecker(day, hours));
+    console.log(Validator.hoursChecker(hours));
+    console.log(await Validator.checkCreateReservation(master_id, towns_id));
+    console.log(Validator.dateRange(day));
+    if (
+      Validator.dateChecker(day, hours) &&
+      Validator.hoursChecker(hours) &&
+      (await Validator.checkCreateReservation(master_id, towns_id)) &&
+      Validator.dateRange(day) &&
+      (await Validator.sameTime(day, hours, master_id))
+    ) {
       try {
         const reservation = await Reservation.create({
           day,
@@ -46,7 +61,7 @@ class ReservationController {
       } catch (e) {
         next(ApiError.badRequest(e.message));
       }
-    }else return res.json('vrong date')
+    } else return res.json("Неверные данные");
   }
 
   async getAvailable(req, res, next) {
@@ -59,29 +74,6 @@ class ReservationController {
     } catch (e) {
       next(ApiError.badRequest(e.message));
     }
-  }
-
-  async sendMail(req, res, next) {
-    const { recipient, name, surname, rating } = req.body;
-    let transporter = nodemailer.createTransport({
-      host: "mail.ee",
-      auth: {
-        user: "alexross1994@mail.ee",
-        pass: "4QW9nfaVC4",
-      },
-    });
-
-    let result = await transporter.sendMail({
-      from: "alexross1994@mail.ee",
-      to: recipient,
-      subject: "Уведомление о резерве мастера",
-      text: "This message was sent from Node js server.",
-      html: `
-      Вы успешно заказали мастера ${name} ${surname} с рейтингом ${rating} 
-      `,
-    });
-
-    return res.json(result);
   }
 
   //Расчет подходящих мастеров
@@ -102,15 +94,15 @@ class ReservationController {
     //Берет всех мастеров с этого города
 
     let finaleMastersIndex = [];
-    let temporary = {}
+    let temporary = {};
     includingMasters.forEach((el) => {
       finaleMastersIndex.push(el.id);
       temporary[el.id] = {
         id: el.id,
         name: el.name,
         surname: el.surname,
-        rating: el.rating
-      }
+        rating: el.rating,
+      };
     });
 
     let timeStart = date.time[0];
@@ -130,24 +122,62 @@ class ReservationController {
         el.hours = el.hours.split("-");
         if (!checkInterval(el.hours[0], el.hours.slice(-1))) {
           if (finaleMastersIndex.indexOf(el.master_id) !== -1) {
-            finaleMastersIndex.splice(finaleMastersIndex.indexOf(el.master_id), 1);
+            finaleMastersIndex.splice(
+              finaleMastersIndex.indexOf(el.master_id),
+              1
+            );
           }
         }
       });
     }
 
-    let finaleMasters = []
-     finaleMastersIndex.forEach((el) => {
-      finaleMasters.push(temporary[el])
-    })
+    let finaleMasters = [];
+    finaleMastersIndex.forEach((el) => {
+      finaleMasters.push(temporary[el]);
+    });
 
-    return res.json(finaleMasters)
+    return res.json(finaleMasters);
   }
-}
 
-function dateConverter(day, month, year, hour) {
- if (Number(day)[0] == 0) Number(day) = Number(day)[1]
-  return (year * 8760 + month * 730 + day * 24 + hour)
+  async makeOrder(req, res, next) {
+    const {
+      day,
+      hours,
+      master_id,
+      towns_id,
+      recipient,
+      name,
+      surname,
+      rating,
+    } = req.body;
+
+    if (
+      Validator.dateChecker(day, hours) &&
+      Validator.hoursChecker(hours) &&
+      Validator.checkCreateReservation(master_id, towns_id) &&
+      Validator.checkEmail(recipient) &&
+      Validator.checkName(name) &&
+      Validator.checkName(surname) &&
+      Validator.checkRating(rating) &&
+      Validator.dateRange(day) &&
+      (await Validator.sameTime(day, hours, master_id))
+    ) {
+      try {
+        const reservation = await Reservation.create({
+          day,
+          hours,
+          master_id,
+          towns_id,
+        });
+
+        //Отправка письма
+        sendMail(recipient, name, surname, rating);
+        return res.json(reservation);
+      } catch (e) {
+        next(ApiError.badRequest(e.message));
+      }
+    } else return res.json("Неверные данные");
+  }
 }
 
 module.exports = new ReservationController();
