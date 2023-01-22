@@ -1,4 +1,4 @@
-const { Reservation, Masters } = require("../models/models");
+const { Reservation, Masters, Clients } = require("../models/models");
 const ApiError = require("../error/ApiError");
 const nodemailer = require("nodemailer");
 const Validator = require("../middleware/validator");
@@ -23,6 +23,15 @@ async function sendMail(recipient, name, surname, rating) {
     `,
   });
 }
+//Создание нового клиента, если такой почты не существует
+async function check(name, email) {
+  let existence = await Clients.findOne({
+    where: { email: email },
+  });
+  if (existence == null) {
+    const client = await Clients.create({ name, email });
+  }
+}
 
 class ReservationController {
   async getAll(req, res) {
@@ -38,11 +47,6 @@ class ReservationController {
 
   async create(req, res, next) {
     const { day, hours, master_id, towns_id } = req.body;
-    //console.log(await Validator.sameTime(day, hours, master_id));
-    //console.log(Validator.dateChecker(day, hours));
-    //console.log(Validator.hoursChecker(hours));
-    //console.log(await Validator.checkCreateReservation(master_id, towns_id));
-    //console.log(Validator.dateRange(day));
     if (
       Validator.dateChecker(day, hours) &&
       Validator.hoursChecker(hours) &&
@@ -149,6 +153,7 @@ class ReservationController {
       name,
       surname,
       rating,
+      clientName,
     } = req.body;
 
     if (
@@ -158,6 +163,7 @@ class ReservationController {
       Validator.checkEmail(recipient) &&
       Validator.checkName(name) &&
       Validator.checkName(surname) &&
+      Validator.checkName(clientName) &&
       Validator.checkRating(rating) &&
       Validator.dateRange(day) &&
       (await Validator.sameTime(day, hours, master_id))
@@ -172,6 +178,8 @@ class ReservationController {
 
         //Отправка письма
         sendMail(recipient, name, surname, rating);
+        //Создание нового клиента
+        check(clientName, recipient);
         return res.json(reservation);
       } catch (e) {
         next(ApiError.badRequest(e.message));
