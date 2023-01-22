@@ -36,14 +36,15 @@ Validator.checkRating = function ratingCheck(el) {
 Validator.dateChecker = function checkerDate(day, hours) {
   let d = new Date();
   let currentDay = String(d.getDate());
-  let currentMonth = String(d.getMonth() + 1);
+  let currentMonth = String(+d.getMonth() + 1);
   let currentYear = String(d.getFullYear());
   let currenthour = String(d.getHours())
   let currentTimestamp = Validator.dateConverter(currentDay, currentMonth, currentYear, currenthour)
   let date = day.split('.')
+console.log(currentTimestamp, 'currentTimestamp')
 
   if (date[0][0] == 0) date[0] = date[0][1]
-  if(Validator.dateConverter(date[0], date[1], date[2], hours.split('-')[0]) > currentTimestamp) {
+  if(Validator.dateConverter(date[0], date[1], date[2], hours.split('-')[0]) > +currentTimestamp) {
     return true
   }else {
     return false
@@ -52,7 +53,8 @@ Validator.dateChecker = function checkerDate(day, hours) {
 
 Validator.dateConverter = function converterData(day, month, year, hour) {
   if (Number(day)[0] == 0) Number(day) = Number(day)[1]
-   return (year * 8760 + month * 730 + day * 24 + hour)
+  console.log(year * 8760 + month * 730 + day * 24 + hour, 'necurrent')
+   return (+year * 8760 + +month * 730 + +day * 24 + +hour)
  }
 
 Validator.hoursChecker = function checkerHours(hours) {
