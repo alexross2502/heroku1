@@ -112,10 +112,18 @@ class ReservationController {
     let timeStart = date.time[0];
     let timeEnd = date.time[1];
 
-    function checkInterval(reservationStart, reservationEnd) {
+    function checkInterval(
+      reservationStart,
+      reservationEnd,
+      timeStart,
+      timeEnd
+    ) {
+      reservationEnd = +reservationEnd + 1;
+      timeEnd = +timeEnd + 1;
       if (
-        (reservationStart >= timeStart && reservationStart < timeEnd) ||
-        (reservationEnd > timeStart && reservationEnd <= timeEnd)
+        (timeEnd > reservationStart && timeEnd <= reservationEnd) ||
+        (timeStart >= reservationStart && timeStart < reservationEnd) ||
+        (timeStart <= reservationStart && timeEnd >= reservationEnd)
       ) {
         return false;
       } else return true;
@@ -124,7 +132,9 @@ class ReservationController {
     if (includingReservation.length !== 0) {
       includingReservation.forEach((el) => {
         el.hours = el.hours.split("-");
-        if (!checkInterval(el.hours[0], el.hours.slice(-1))) {
+        if (
+          !checkInterval(el.hours[0], el.hours.slice(-1), timeStart, timeEnd)
+        ) {
           if (finaleMastersIndex.indexOf(el.master_id) !== -1) {
             finaleMastersIndex.splice(
               finaleMastersIndex.indexOf(el.master_id),
