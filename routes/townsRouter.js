@@ -14,5 +14,10 @@ router.delete(
   passport.authenticate("jwt", { session: false }),
   townsController.destroy
 );
+router.get(
+  "/foradmin",
+  passport.authenticate("jwt", { session: false }),
+  townsController.getForAdmin
+);
 
 module.exports = router;

@@ -27,6 +27,11 @@ class TownsController {
     const towns = await Towns.destroy({ where: { id: id } });
     return res.json(towns);
   }
+
+  async getForAdmin(req, res) {
+    const towns = await Towns.findAll();
+    return res.json(towns);
+  }
 }
 
 module.exports = new TownsController();
