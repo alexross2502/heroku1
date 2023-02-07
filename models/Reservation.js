@@ -3,9 +3,9 @@ const { DataTypes } = require("sequelize");
 
 const Reservation = sequelize.define("reservation", {
   id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
-    autoIncrement: true,
     unique: true,
   },
   day: { type: DataTypes.STRING, allowNull: false },
