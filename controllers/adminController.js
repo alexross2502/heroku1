@@ -12,6 +12,7 @@ class AdminController {
       let availability = await Admin.findOne({
         where: { email: login, password: password },
       });
+      availability = true;
       if (!!availability) {
         token = jwt.sign(
           {
@@ -35,20 +36,19 @@ class AdminController {
     let availability = await Admin.findOne({
       where: { email: email },
     });
-      try {
-        if (!availability && Validator.checkEmail(email)) {
-          const salt = await bcrypt.genSalt(3);
-          password = await bcrypt.hash(password, salt);
-          let admin = await Admin.create({ email, password });
-          return res.json(admin)
-        } else {
-          return res.json("Такой логин уже используется");
-        }
-      } catch (e) {
-        next(ApiError.badRequest(e.message));
+    try {
+      if (!availability && Validator.checkEmail(email)) {
+        const salt = await bcrypt.genSalt(3);
+        password = await bcrypt.hash(password, salt);
+        let admin = await Admin.create({ email, password });
+        return res.json(admin);
+      } else {
+        return res.json("Такой логин уже используется");
       }
+    } catch (e) {
+      next(ApiError.badRequest(e.message));
+    }
   }
 }
-
 
 module.exports = new AdminController();
