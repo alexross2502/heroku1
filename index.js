@@ -6,26 +6,16 @@ const sequelize = require("./db");
 const models = require("./models/models");
 const router = require("./routes/index");
 const errorHandler = require("./middleware/ErrorHandlingMiddleware");
+const passport = require("passport");
 
-app.use(cors({
-  origin: "*"
-}))
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
-
-app.get("*", function (req, res, next) {
-  console.log(req.header('Origin'))
-  if(req.header('Origin') == 'https://test-app22334455.herokuapp.com') {next()} else res.json({ msg: "Конфиденциальные данные" });
-});
-
-app.post("*", function (req, res, next) {
-  console.log(req.header('Origin'))
-  if(req.header('Origin') == 'https://test-app22334455.herokuapp.com') {next()} else res.json({ msg: "Конфиденциальные данные" });
-});
-
-app.delete("*", function (req, res, next) {
-  if(req.header('Origin') == 'https://test-app22334455.herokuapp.com') {next()} else res.json({ msg: "Конфиденциальные данные" });
-});
-
+app.use(passport.initialize());
+require("./middleware/passport")(passport);
 
 app.use(express.json());
 app.use("/api", router);

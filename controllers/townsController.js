@@ -1,12 +1,17 @@
 const { Towns } = require("../models/models");
 const ApiError = require("../error/ApiError");
+const Validator = require("../middleware/validator");
 
 class TownsController {
   async create(req, res, next) {
     try {
       const { name } = req.body;
-      const town = await Towns.create({ name: name });
-      return res.json(town);
+      if (Validator.checkName(name)) {
+        const town = await Towns.create({ name: name });
+        return res.json(town);
+      } else {
+        return res.json("Неверные данные");
+      }
     } catch (e) {
       next(ApiError.badRequest(e.message));
     }

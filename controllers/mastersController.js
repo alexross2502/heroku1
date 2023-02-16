@@ -1,12 +1,28 @@
 const { Masters } = require("../models/models");
 const ApiError = require("../error/ApiError");
+const Validator = require("../middleware/validator");
 
 class MastersController {
   async create(req, res, next) {
     try {
       const { name, surname, rating, townName } = req.body;
-      const master = await Masters.create({ name, surname, rating, townName });
-      return res.json(master);
+      if (
+        Validator.checkName(name) &&
+        Validator.checkName(surname) &&
+        Validator.checkName(townName) &&
+        Validator.checkRating(rating) &&
+        (await Validator.checkTownForMaster(townName))
+      ) {
+        const master = await Masters.create({
+          name,
+          surname,
+          rating,
+          townName,
+        });
+        return res.json(master);
+      } else {
+        return res.json("Неверные данные");
+      }
     } catch (e) {
       next(ApiError.badRequest(e.message));
     }

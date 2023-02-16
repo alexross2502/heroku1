@@ -3,9 +3,9 @@ const { DataTypes } = require("sequelize");
 
 const Admin = sequelize.define("admin", {
   id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
-    autoIncrement: true,
     unique: true,
   },
   email: { type: DataTypes.STRING, unique: true, allowNull: false },
