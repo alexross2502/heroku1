@@ -1,7 +1,7 @@
 const { Towns } = require("./Towns");
 const { Masters } = require("./Masters");
 const { Reservation } = require("./Reservation");
-
+/*
 Towns.hasMany(Masters, {
   sourceKey: "name",
   foreignKey: "townName",
@@ -11,7 +11,7 @@ Towns.hasMany(Masters, {
 Masters.hasOne(Towns, {
   constraints: false,
 });
-
+*/
 Masters.hasMany(Reservation, {
   sourceKey: "id",
   foreignKey: "master_id",
@@ -27,7 +27,8 @@ Towns.hasMany(Reservation, {
   foreignKey: "towns_id",
   constraints: false,
 });
-
+/*
 Towns.hasOne(Masters, {
   constraints: false,
 });
+*/
